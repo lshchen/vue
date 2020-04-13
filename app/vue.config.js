@@ -11,6 +11,20 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const PurgecssPlugin = require('purgecss-webpack-plugin');
 
 const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
+const pagesInfo = require("./src/pages.config");
+
+const pages = {};
+glob.sync('./src/pages/**/main.js').forEach(entry => {
+  let chunk = entry.match(/\.\/src\/pages\/(.*)\/main\.js/)[1];
+  const curr = pagesInfo[chunk];
+  if (curr) {
+    pages[chunk] = {
+      entry,
+      ...curr,
+      chunk: ["chunk-vendors", "chunk-common", chunk]
+    }
+  }
+});
 
 // eslint-disable-next-line camelcase
 let has_sprite = true;
@@ -104,12 +118,14 @@ module.exports = {
       },
     },
   },
-  // pages: {},
+  pages,
   chainWebpack: (config) => {
     // 移除 prefetch 插件
     config.plugins.delete('prefetch');
     // 移除 preload 插件
     config.plugins.delete('preload');
+    // 防止多页面打包卡顿
+    config.plugins.delete("named-chunks");
     // 防止将某些 import 的包(package)打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展依赖
     // eslint-disable-next-line no-param-reassign
     config.externals = {
@@ -119,6 +135,33 @@ module.exports = {
       vuex: 'Vuex',
       axios: 'axios',
     };
+    // 如果使用多页面打包，使用vue inspect --plugins查看html是否在结果数组中
+    config.plugin("html").tap(args => {
+      // 修复 Lazy loading routes Error
+      args[0].chunksSortMode = "none";
+      return args;
+    })
+    const cdn = {
+      css: ["//unpkg.com/element-ui@2.10.1/lib/theme-chalk/index.css"],
+      js: [
+        "//unpkg.com/vue@2.6.10/dist/vue.min.js",
+        "//unpkg.com/vue-router@3.0.6/dist/vue-router.min.js",
+        "//unpkg.com/vuex@3.1.1/dist/vuex.min.js",
+        "//unpkg.com/axios@0.19.0/dist/axios.min.js",
+        "//unpkg.com/element-ui@2.10.1/lib/index.js"
+      ]
+    };
+    // 多页面cdn添加
+    Object.keys(pagesInfo).forEach(page => {
+      config.plugin(`html-${page}`).tap(args => {
+        // html中添加cdn
+        args[0].cdn = cdn;
+        // 修复 Lazy loading routes Error
+        args[0].chunksSortMode = "none";
+        return args;
+      });
+
+    });
     // 启用gzip
     if (IS_PROD) {
       const plugins = [];
@@ -139,12 +182,7 @@ module.exports = {
     }
     // 修复HMR
     config.resolve.symlinks(true);
-    // 如果使用多页面打包，使用vue inspect --plugins查看html是否在结果数组中
-    // config.plugin("html").tap(args => {
-    //   // 修复 Lazy loading routes Error
-    //   args[0].chunksSortMode = "none";
-    //   return args;
-    // })
+
     // 添加别名
     // config.resolve.alias.set("vue$", "vue/dist/vue.esm.js")
     // 图片压缩
@@ -230,6 +268,9 @@ module.exports = {
     }
     // eslint-disable-next-line no-param-reassign
     config.plugins = [...config.plugins, ...plugins];
+    if (IS_PROD) {
+      config.optimization.delete("splitChunks");
+    }
     return config;
   },
   configureWebpack: {
@@ -242,6 +283,48 @@ module.exports = {
         components: resolveUrl('src/components'),
       },
     },
+    if (IS_PROD) {
+      config.optimization = {
+        splitChunks: {
+          cacheGroups: {
+            common: {
+              name: "chunk-common",
+              chunks: "initial",
+              minChunks: 2,
+              maxInitialRequests: 5,
+              minSize: 0,
+              priority: 1,
+              reuseExistingChunk: true,
+              enforce: true
+            },
+            vendors: {
+              name: "chunk-vendors",
+              test: /[\\/]node_modules[\\/]/,
+              chunks: "initial",
+              priority: 2,
+              reuseExistingChunk: true,
+              enforce: true
+            },
+            elementUI: {
+              name: "chunk-elementui",
+              test: /[\\/]node_modules[\\/]element-ui[\\/]/,
+              chunks: "all",
+              priority: 3,
+              reuseExistingChunk: true,
+              enforce: true
+            },
+            echarts: {
+              name: "chunk-echarts",
+              test: /[\\/]node_modules[\\/](vue-)?echarts[\\/]/,
+              chunks: "all",
+              priority: 4,
+              reuseExistingChunk: true,
+              enforce: true
+            }
+          }
+        }
+      };
+    }
   },
   pluginOptions: {},
   css: {
