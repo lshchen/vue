@@ -1,15 +1,11 @@
-console.log(process.env.NODE_ENV);
-// eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require('webpack');
-
-const port = process.env.port || 900;
 const path = require('path');
 const fs = require('fs');
 const glob = require('glob-all');
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
-
 const PurgecssPlugin = require('purgecss-webpack-plugin');
-
+const PrerenderSpaPlugin = require("prerender-spa-plugin");
+const port = process.env.port || 900;
 const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
 const pagesInfo = require("./src/pages.config");
 
@@ -26,65 +22,51 @@ glob.sync('./src/pages/**/main.js').forEach(entry => {
   }
 });
 
-// eslint-disable-next-line camelcase
 let has_sprite = true;
 let files = [];
 const icons = {};
 try {
-  // eslint-disable-next-line no-use-before-define
-  fs.statSync(resolveUrl('./src/assets/icons'));
-  // eslint-disable-next-line no-use-before-define
-  files = fs.readdirSync(resolveUrl('./src/assets/icons'));
-
-  files.forEach((item) => {
-    const filename = item.toLocaleLowerCase().replace(/_/g, '-');
+  fs.statSync(resolve("./src/assets/icons"));
+  files = fs.readdirSync(resolve("./src/assets/icons"));
+  files.forEach(item => {
+    let filename = item.toLocaleLowerCase().replace(/_/g, "-");
     icons[filename] = true;
   });
 } catch (error) {
-  // eslint-disable-next-line no-use-before-define
-  fs.mkdirSync(resolveUrl('./src/assets/icons'));
+  fs.mkdirSync(resolve("./src/assets/icons"));
 }
 if (!files.length) {
-  // eslint-disable-next-line camelcase
   has_sprite = false;
 } else {
   try {
-    // eslint-disable-next-line no-use-before-define
-    let iconsObj = fs.readFileSync(resolveUrl('./icons.json'), 'utf8');
+    let iconsObj = fs.readFileSync(resolve("./icons.json"), "utf8");
     iconsObj = JSON.parse(iconsObj);
-    // eslint-disable-next-line camelcase
-    has_sprite = files.some((item) => {
-      const filename = item.toLocaleLowerCase().replace(/_/g, '-');
+    has_sprite = files.some(item => {
+      let filename = item.toLocaleLowerCase().replace(/_/g, "-");
       return !iconsObj[filename];
     });
-    // eslint-disable-next-line camelcase
     if (has_sprite) {
-      // eslint-disable-next-line no-use-before-define
-      fs.writeFileSync(resolveUrl('./icons.json'), JSON.stringify(icons, null, 2));
+      fs.writeFileSync(resolve("./icons.json"), JSON.stringify(icons, null, 2));
     }
   } catch (error) {
-    // eslint-disable-next-line no-use-before-define
-    fs.writeFileSync(resolveUrl('./icons.json'), JSON.stringify(icons, null, 2));
-    // eslint-disable-next-line camelcase
+    fs.writeFileSync(resolve("./icons.json"), JSON.stringify(icons, null, 2));
     has_sprite = true;
   }
 }
 // 雪碧图样式处理模板
-// eslint-disable-next-line no-unused-vars
 const SpritesmithTemplate = function (data) {
   // pc
-  // eslint-disable-next-line no-shadow
-  const icons = {};
+  let icons = {};
   let tpl = `.ico {
-      display: inline-block;
-      background-image: url(${data.sprites[0].image});
-      background-size: ${data.spritesheet.width}px ${data.spritesheet.height}px;
+    display: inline-block;
+    background-image: url(${data.sprites[0].image});
+    background-size: ${data.spritesheet.width}px ${data.spritesheet.height}px;
   }`;
-  data.sprites.forEach((sprite) => {
-    const name = `${sprite.name.toLocaleLowerCase().replace(/_/g, '-')}`;
+  data.sprites.forEach(sprite => {
+    const name = "" + sprite.name.toLocaleLowerCase().replace(/_/g, "-");
     icons[`${name}.png`] = true;
     tpl = `${tpl}
-      .ico-${name}{
+    .ico-${name}{
       width: ${sprite.width}px;
       height: ${sprite.height}px;
       background-position: ${sprite.offset_x}px ${sprite.offset_y}px;
@@ -93,7 +75,18 @@ const SpritesmithTemplate = function (data) {
   return tpl;
 };
 const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV);
-function resolveUrl(dir) {
+const cdn = {
+  // 访问https://unpkg.com/element-ui/lib/theme-chalk/index.css获取最新版本
+  css: ["//unpkg.com/element-ui@2.10.1/lib/theme-chalk/index.css"],
+  js: [
+    "//unpkg.com/vue@2.6.10/dist/vue.min.js", // 访问https://unpkg.com/vue/dist/vue.min.js获取最新版本
+    "//unpkg.com/vue-router@3.0.6/dist/vue-router.min.js",
+    "//unpkg.com/vuex@3.1.1/dist/vuex.min.js",
+    "//unpkg.com/axios@0.19.0/dist/axios.min.js",
+    "//unpkg.com/element-ui@2.10.1/lib/index.js"
+  ]
+};
+function resolve(dir) {
   return path.join(__dirname, dir);
 }
 module.exports = {
@@ -120,169 +113,124 @@ module.exports = {
   },
   pages,
   chainWebpack: (config) => {
+    // 修复HMR
+    config.resolve.symlinks(true);
     // 移除 prefetch 插件
     config.plugins.delete('prefetch');
     // 移除 preload 插件
     config.plugins.delete('preload');
-    // 防止多页面打包卡顿
-    config.plugins.delete("named-chunks");
-    // 防止将某些 import 的包(package)打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展依赖
-    // eslint-disable-next-line no-param-reassign
-    config.externals = {
-      vue: 'Vue',
-      'element-ui': 'ELEMENT',
-      'vue-router': 'VueRouter',
-      vuex: 'Vuex',
-      axios: 'axios',
-    };
     // 如果使用多页面打包，使用vue inspect --plugins查看html是否在结果数组中
     config.plugin("html").tap(args => {
       // 修复 Lazy loading routes Error
       args[0].chunksSortMode = "none";
+      args[1].cdn = cdn;
       return args;
-    })
-    const cdn = {
-      css: ["//unpkg.com/element-ui@2.10.1/lib/theme-chalk/index.css"],
-      js: [
-        "//unpkg.com/vue@2.6.10/dist/vue.min.js",
-        "//unpkg.com/vue-router@3.0.6/dist/vue-router.min.js",
-        "//unpkg.com/vuex@3.1.1/dist/vuex.min.js",
-        "//unpkg.com/axios@0.19.0/dist/axios.min.js",
-        "//unpkg.com/element-ui@2.10.1/lib/index.js"
-      ]
-    };
-    // 多页面cdn添加
-    Object.keys(pagesInfo).forEach(page => {
-      config.plugin(`html-${page}`).tap(args => {
-        // html中添加cdn
-        args[0].cdn = cdn;
-        // 修复 Lazy loading routes Error
-        args[0].chunksSortMode = "none";
-        return args;
-      });
-
     });
-    // 启用gzip
-    if (IS_PROD) {
-      const plugins = [];
-      plugins.push(
-        new CompressionWebpackPlugin({
-          filename: '[path].gz[query]',
-          algorithm: 'gzip',
-          test: productionGzipExtensions,
-          threshold: 10240,
-          minRatio: 0.8,
-        }),
-      );
-      // eslint-disable-next-line no-param-reassign
-      config.plugins = [
-        ...config.plugins,
-        ...plugins,
-      ];
-    }
-    // 修复HMR
-    config.resolve.symlinks(true);
-
     // 添加别名
-    // config.resolve.alias.set("vue$", "vue/dist/vue.esm.js")
-    // 图片压缩
+    config.resolve.alias.set("@", resolve("src"));
+    // 压缩图片
     if (IS_PROD) {
       config.module
-        .rule('images')
-        .use('image-webpack-loader')
-        .loader('image-webpack-loader')
+        .rule("images")
+        .use("image-webpack-loader")
+        .loader("image-webpack-loader")
         .options({
           mozjpeg: { progressive: true, quality: 65 },
           optipng: { enabled: false },
           pngquant: { quality: [0.65, 0.9], speed: 4 },
-          gifsicle: { interlaced: false },
-          webp: { quality: 75 },
+          gifsicle: { interlaced: false }
+          // webp: { quality: 75 }
         });
     }
-    // 删除无效css
+    // 删除 moment 语言包
+    config.plugin("ignore").use(
+        new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn$/)
+    );
     if (IS_PROD) {
-      const plugins = [];
+      config.optimization.delete("splitChunks");
+    }
+    return config;
+  },
+  configureWebpack: args => {
+    const plugins = [];
+    if (has_sprite) {
       plugins.push(
-        // eslint-disable-next-line no-undef
+        new SpritesmithPlugin({
+          src: {
+            cwd: path.resolve(__dirname, "./src/assets/icons/"), // 图标根路径
+            glob: "**/*.png" // 匹配任意 png 图标
+          },
+          target: {
+            image: path.resolve(__dirname, "./src/assets/images/sprites.png"), // 生成雪碧图目标路径与名称
+            // 设置生成CSS背景及其定位的文件或方式
+            css: [
+              [
+                path.resolve(__dirname, "./src/assets/scss/sprites.scss"),
+                {
+                  format: "function_based_template"
+                }
+              ]
+            ]
+          },
+          customTemplates: {
+            function_based_template: SpritesmithTemplate
+          },
+          apiOptions: {
+            cssImageRef: "../images/sprites.png" // css文件中引用雪碧图的相对位置路径配置
+          },
+          spritesmithOptions: {
+            padding: 2
+          }
+        })
+      );
+    }
+    if (IS_PROD) {
+      plugins.push(
         new PurgecssPlugin({
-          // eslint-disable-next-line no-undef
-          paths: glob.sync([resolveUrl('./**/*.vue')]),
+          paths: glob.sync([resolve("./**/*.vue")]),
           extractors: [
             {
               extractor: class Extractor {
                 static extract(content) {
                   const validSection = content.replace(
                     /<style([\s\S]*?)<\/style>+/gim,
-                    '',
+                    ""
                   );
-                  return validSection.match(/[A-Za-z0-9-_:/]+/g) || [];
+                  return (
+                    validSection.match(/[A-Za-z0-9-_/:]*[A-Za-z0-9-_/]+/g) || []
+                  );
                 }
               },
-              extensions: ['vue'],
-            },
+              extensions: ["html", "vue"]
+            }
           ],
-          whitelist: ['html', 'body'],
-        }),
-      );
-      // eslint-disable-next-line no-param-reassign
-      config.plugins = [...config.plugins, ...plugins];
-    }
-    // 删除comment包
-    config
-      .plugin('ignore')
-      .use(
-        new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn$/),
-      );
-    const plugins = [];
-    // eslint-disable-next-line camelcase
-    if (has_sprite) {
-      plugins.push(
-        new SpritesmithPlugin({
-          src: {
-            cwd: path.resolve(__dirname, './src/assets/icons/'), // 图标根路径
-            glob: '**/*.png', // 匹配任意 png 图标
-          },
-          target: {
-            image: path.resolve(__dirname, './src/assets/images/sprites.png'), // 生成雪碧图目标路径与名称
-            // 设置生成CSS背景及其定位的文件或方式
-            css: [
-              [
-                path.resolve(__dirname, './src/assets/scss/sprites.scss'),
-                {
-                  format: 'function_based_template',
-                },
-              ],
-            ],
-          },
-          customTemplates: {
-            function_based_template: SpritesmithTemplate,
-          },
-          apiOptions: {
-            cssImageRef: '../images/sprites.png', // css文件中引用雪碧图的相对位置路径配置
-          },
-          spritesmithOptions: {
-            padding: 2,
-          },
-        }),
+          whitelist: ["html", "body"],
+          whitelistPatterns: [
+            /el-.*/,
+            /-(leave|enter|appear)(|-(to|from|active))$/,
+            /^(?!cursor-move).+-move$/,
+            /^router-link(|-exact)-active$/
+          ],
+          whitelistPatternsChildren: [/^token/, /^pre/, /^code/]
+        })
       );
     }
-    // eslint-disable-next-line no-param-reassign
-    config.plugins = [...config.plugins, ...plugins];
+    // 打包分析
     if (IS_PROD) {
-      config.optimization.delete("splitChunks");
+      config.plugin("webpack-report").use(BundleAnalyzerPlugin, [
+        {
+          analyzerMode: "static"
+        }
+      ]);
     }
-    return config;
-  },
-  configureWebpack: {
-    name: 'app',
-    resolve: {
-      extensions: ['.js', '.css', '.json', '.vue'],
-      alias: {
-        '@': resolveUrl('src'),
-        views: resolveUrl('src/views'),
-        components: resolveUrl('src/components'),
-      },
-    },
+    // 配置 externals 引入 cdn 资源
+    config.externals = {
+      vue: "Vue",
+      "element-ui": "ELEMENT",
+      "vue-router": "VueRouter",
+      vuex: "Vuex",
+      axios: "axios"
+    };
     if (IS_PROD) {
       config.optimization = {
         splitChunks: {
@@ -325,6 +273,49 @@ module.exports = {
         }
       };
     }
+    // 开启 gzip 压缩
+    if (IS_PROD) {
+      plugins.push(
+        new CompressionWebpackPlugin({
+          filename: "[path].gz[query]",
+          algorithm: "gzip",
+          test: productionGzipExtensions,
+          threshold: 10240,
+          minRatio: 0.8
+        })
+      );
+    }
+    if (IS_PROD) {
+      plugins.push(
+        new PrerenderSpaPlugin({
+          staticDir: resolve("dist"),
+          routes: ["/"],
+          postProcess(ctx) {
+            ctx.route = ctx.originalRoute;
+            ctx.html = ctx.html.split(/>[\s]+</gim).join("><");
+            if (ctx.route.endsWith(".html")) {
+              ctx.outputPath = path.join(__dirname, "dist", ctx.route);
+            }
+            return ctx;
+          },
+          minify: {
+            collapseBooleanAttributes: true,
+            collapseWhitespace: true,
+            decodeEntities: true,
+            keepClosingSlash: true,
+            sortAttributes: true
+          },
+          renderer: new PrerenderSpaPlugin.PuppeteerRenderer({
+            // 需要注入一个值，这样就可以检测页面当前是否是预渲染的
+            inject: {},
+            headless: false,
+            // 视图组件在API请求获取所有数据后呈现的，因此dom中存在“data view”属性后创建页面快照
+            renderAfterDocumentEvent: "render-event"
+          })
+        })
+      );
+    }
+    config.plugins = [...config.plugins, ...plugins];
   },
   pluginOptions: {},
   css: {
@@ -352,6 +343,7 @@ module.exports = {
     // 这个选项不会影响 `*.vue` 文件。
     requireModuleExtension: false,
   },
-  // eslint-disable-next-line global-require
   parallel: require('os').cpus().length > 1,
+  runtimeCompiler: true, // 是否使用包含运行时编译器的 Vue 构建版本
+  pwa: {},
 };
