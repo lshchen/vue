@@ -6,24 +6,10 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const PurgecssPlugin = require('purgecss-webpack-plugin');
 const os = require('os');
 const SpritesmithPlugin = require('webpack-spritesmith');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzer = require('webpack-bundle-analyzer');
 
 const port = process.env.port || 900;
 const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
-const pagesInfo = require('./src/pages.config');
-
-const pages = {};
-glob.sync('src/pages/**/main.js').forEach((entry) => {
-  const chunk = entry.match(/\.\/src\/pages\/(.*)\/main\.js/)[1];
-  const curr = pagesInfo[chunk];
-  if (curr) {
-    pages[chunk] = {
-      entry,
-      ...curr,
-      chunk: ['chunk-vendors', 'chunk-common', chunk],
-    };
-  }
-});
 function resolve(dir) {
   return path.join(__dirname, dir);
 }
@@ -102,7 +88,28 @@ module.exports = {
       },
     },
   },
-  // pages,
+  pages: {
+    index: {
+      // page 的入口
+      entry: 'src/main.js',
+      // 模板来源
+      template: 'public/index.html',
+      // 在 dist/index.html 的输出
+      filename: 'index.html',
+      // 当使用 title 选项时，
+      // template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+      title: 'index',
+      // 提取出来的通用 chunk 和 vendor chunk。
+      chunks: ['chunk-vendors', 'chunk-common', 'index'],
+    },
+    login: {
+      entry: 'src/pages/login.js',
+      template: 'public/login.html',
+      filename: 'login.html',
+      title: 'login',
+      chunks: ['chunk-vendors', 'chunk-common', 'index'],
+    },
+  },
   chainWebpack: (config) => {
     // 修复HMR
     config.resolve.symlinks(true);
@@ -110,14 +117,6 @@ module.exports = {
     config.plugins.delete('prefetch');
     // 移除 preload 插件
     config.plugins.delete('preload');
-    // 如果使用多页面打包，使用vue inspect --plugins查看html是否在结果数组中
-    // config.plugin('html').tap((args) => {
-    //   const arg = args;
-    //   console.log(args);
-    //   // 修复 Lazy loading routes Error
-    //   // arg[0].chunksSortMode = 'none';
-    //   return arg;
-    // });
     // 添加别名
     config.resolve.alias.set('@', resolve('src'))
       .set('@scss', resolve('src/assets/scss'));
@@ -141,14 +140,11 @@ module.exports = {
     );
     // 打包分析
     if (IS_PROD) {
-      config.plugin('webpack-report').use(BundleAnalyzerPlugin, [
+      config.plugin('webpack-report').use(BundleAnalyzer.BundleAnalyzerPlugin, [
         {
           analyzerMode: 'static',
         },
       ]);
-    }
-    if (IS_PROD) {
-      config.optimization.delete('splitChunks');
     }
     return config;
   },
@@ -193,31 +189,11 @@ module.exports = {
     if (IS_PROD) {
       plugins.push(
         new PurgecssPlugin({
-          paths: glob.sync([resolve('./**/*.vue')]),
-          extractors: [
-            {
-              extractor: class Extractor {
-                static extract(content) {
-                  const validSection = content.replace(
-                    /<style([\s\S]*?)<\/style>+/gim,
-                    '',
-                  );
-                  return (
-                    validSection.match(/[A-Za-z0-9-_/:]*[A-Za-z0-9-_/]+/g) || []
-                  );
-                }
-              },
-              extensions: ['html', 'vue'],
-            },
-          ],
-          whitelist: ['html', 'body'],
-          whitelistPatterns: [
-            /el-.*/,
-            /-(leave|enter|appear)(|-(to|from|active))$/,
-            /^(?!cursor-move).+-move$/,
-            /^router-link(|-exact)-active$/,
-          ],
-          whitelistPatternsChildren: [/^token/, /^pre/, /^code/],
+          paths: glob.sync([
+            path.join(__dirname, './src/index.html'),
+            path.join(__dirname, './**/*.vue'),
+            path.join(__dirname, './src/**/*.js'),
+          ]),
         }),
       );
     }
@@ -281,29 +257,6 @@ module.exports = {
     config.plugins = [...config.plugins, ...plugins];
   },
   pluginOptions: {},
-  css: {
-    // 将组件内的 CSS 提取到一个单独的 CSS 文件 (只用在生产环境中)
-    // 也可以是一个传递给 `extract-text-webpack-plugin` 的选项对象
-    extract: true,
-
-    // 是否开启 CSS source map？
-    sourceMap: false,
-
-    // 为预处理器的 loader 传递自定义选项。比如传递给
-    // sass-loader 时，使用 `{ sass: { ... } }`。
-    loaderOptions: {
-      scss: {
-        // 向全局sass样式传入共享的全局变量, $src可以配置图片cdn前缀
-        prependData: `
-          @import "@scss/public.scss";
-          // $src: "${process.env.VUE_APP_OSS_SRC}";
-        `,
-      },
-    },
-    // 为所有的 CSS 及其预处理文件开启 CSS Modules。
-    // 这个选项不会影响 `*.vue` 文件。
-    requireModuleExtension: false,
-  },
   parallel: os.cpus().length > 1,
   runtimeCompiler: true, // 是否使用包含运行时编译器的 Vue 构建版本
   pwa: {},
