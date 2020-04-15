@@ -10,6 +10,3 @@ module.exports = {
   ],
   plugins,
 };
-
-// 多页面打包 multi-page
-// 利用 splitChunks 单独打包第三方模块

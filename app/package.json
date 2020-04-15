@@ -10,6 +10,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.8.7",
     "core-js": "^3.6.4",
+    "fastclick": "^1.0.6",
     "lib-flexible": "^0.3.2",
     "postcss-pxtorem": "^5.1.1",
     "vant": "^2.6.0",
@@ -30,8 +31,8 @@
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-vue": "^6.2.2",
-    "fastclick": "^1.0.6",
     "glob-all": "^3.2.1",
+    "image-webpack-loader": "^6.0.0",
     "lint-staged": "^9.5.0",
     "purgecss-webpack-plugin": "^2.1.2",
     "sass": "^1.26.3",
