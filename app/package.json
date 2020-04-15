@@ -37,6 +37,8 @@
     "sass": "^1.26.3",
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.42.1",
+    "webpack-bundle-analyzer": "^3.7.0",
     "webpack-spritesmith": "^1.1.0"
   },
   "gitHooks": {
