@@ -68,7 +68,7 @@ const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV);
 
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
-  lintOnSave: false,
+  lintOnSave: true,
   productionSourceMap: false,
   // lintOnSave:process.env.NODE_ENV == 'development'
   devServer: {
@@ -146,6 +146,7 @@ module.exports = {
         },
       ]);
     }
+    // config.resolve.set('extensions', ['.js', '.vue', '.json', '.css']);
     return config;
   },
   configureWebpack: (config) => {
@@ -260,4 +261,7 @@ module.exports = {
   parallel: os.cpus().length > 1,
   runtimeCompiler: true, // 是否使用包含运行时编译器的 Vue 构建版本
   pwa: {},
+  css: {
+    sourceMap: true,
+  },
 };

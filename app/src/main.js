@@ -7,13 +7,13 @@ import 'lib-flexible/flexible';
 import FastClick from 'fastclick';
 
 import '@babel/polyfill';
-import App from './App.vue';
+import App from './App';
 import router from './router';
 import store from './store';
 
 Vue.config.productionTip = false;
 FastClick.attach(document.body);
-Vue.use(Vant)
+Vue.use(Vant);
 new Vue({
   router,
   store,

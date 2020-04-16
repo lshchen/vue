@@ -16,4 +16,4 @@ Vue.use(Vant)
 new Vue({
   router,
   render: (h) => h(Login),
-}).$mount('#login');
+}).$mount('#app');

@@ -1,6 +1,7 @@
 <template>
-  <div id="login">
-    fdivfkdsjfl
+  <div id="app">
+    <div>fdivfkdsjfl</div>
+    <router-view/>
   </div>
 </template>
 <script>
