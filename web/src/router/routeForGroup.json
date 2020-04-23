@@ -1,0 +1,34 @@
+[{
+	"id": 62,
+	"name": "主页",
+	"path": "/main/home/home-common",
+	"component": "/pages/home/home-common",
+	"parentId": 0,
+	"icon": "icon-zhuye",
+	"subList": []
+}, {
+	"id": 129,
+	"name": "系统",
+	"path": "",
+	"component": null,
+	"description": "",
+	"parentId": 0,
+	"icon": "icon-xitong",
+	"subList": [{
+		"id": 316,
+		"name": "角色管理",
+		"path": "/main/system/group-roles",
+		"component": "/pages/system/group-roles",
+		"parentId": 129,
+		"icon": null,
+		"subList": []
+	}, {
+		"id": 320,
+		"name": "超级用户列表",
+		"path": "/main/system/group-super-user",
+		"component": "/pages/system/group-super-user-list",
+		"parentId": 129,
+		"icon": null,
+		"subList": []
+	}]
+}]
