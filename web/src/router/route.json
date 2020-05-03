@@ -1,8 +1,8 @@
 [{
 	"id": 62,
 	"name": "主页",
-	"path": "/main/home/home-common",
-	"component": "/pages/home/home-common",
+	"path": "/home/home-common",
+	"component": "/views/home-common/home-common",
 	"parentId": 0,
 	"icon": "icon-zhuye",
 	"subList": []

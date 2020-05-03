@@ -4,10 +4,7 @@ import Vuex from 'vuex'
 import auth from './modules/auth'
 import user from './modules/user'
 import tagNav from './modules/tagNav'
-import redis from './modules/redis'
-import config from './modules/config'
 import loading from './modules/loading'
-import house from './modules/house'
 
 import getters from './getters'
 import createPersistedState from 'vuex-persistedstate'
@@ -19,9 +16,6 @@ export default new Vuex.Store({
     auth,
     user,
     tagNav,
-    redis,
-    config,
-    house,
     loading
   },
   getters,
