@@ -1,0 +1,237 @@
+html, body, div, section, header, footer, aside, ul, ol, li, table, tr, th, td, button, input, textarea, select, h1, h2, h3, h4, h5, h6, em, i, strong, p, span, blockquote {
+    margin: 0;
+    padding: 0;
+}
+h1, h2, h3, h4, h5, h6, em, th, i, strong, input, textarea, button, select {
+    font-weight: normal;
+    font-style: normal;
+    font-size: 100%;
+}
+ul, ol {
+    list-style: none;
+    vertical-align: top;
+}
+table, td, th {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+input, button, select, textarea {
+    outline: none;
+    background: none;   
+}
+textarea {
+    resize: none;
+}
+img, a img {
+    border: none;
+    vertical-align: top;
+}
+a {
+    color: #000;
+}
+a:link, a:active, a:visited {
+    color: #465873;
+    /*-webkit-tap-highlight-color: rgba(0, 0, 0, 0);*/
+}
+a:hover {
+    color: #409eff;
+}
+html {
+    height: 100%;
+}
+body {
+    font-size: 12px;
+    font-family: Helvetica, Microsoft YaHei, sans-serif;
+    /*color: #52bab5;*/
+    height: 100%;
+    /* background:#e9ecee; */
+}
+.el-table, .el-input, .el-form-item__content, .el-form-item__label {
+    font-size: 12px;
+}
+.fl {
+    float: left;
+}
+.fr {
+    float: right;
+}
+.fc {
+    margin: 0 auto;
+}
+.vertical-middle {
+    vertical-align: middle;
+}
+
+/**显示隐藏**/
+.hidden {
+    display: none;
+}
+.clear:after {
+    content: "";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    height: 0;
+}
+.overflow {
+    overflow: hidden;
+}
+
+/**定位**/
+
+.posR {
+    position: relative;
+}
+.posA {
+    position: absolute;
+}
+.posF {
+    position: fixed;
+}
+.fb {
+    font-weight: bold;
+}
+.textL {
+    text-align: left;
+}
+.textC {
+    text-align: center;
+}
+.textR {
+    text-align: right;
+}
+.text2em {
+    text-indent: 2em;
+}
+.word-hidden {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.ri-t-code canvas{
+    width:100px;
+    height:80px;
+}
+.text-danger{
+  color: #F56C6C !important;
+}
+.resetInput input, .resetInput textarea, .resetInput .el-cascader__label{
+  background: transparent !important;
+  border: none !important;
+  color: #4d4d4d !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  cursor: inherit !important;
+}
+.resetInput i, .resetInput .el-form-item__error{
+  display: none !important;
+}
+.resetInput .el-form-item__label{
+  color: #adacac;
+}
+.resetInput .el-form-item__label::before{
+  content: '' !important;
+}
+/* 百度地图logo不显示 */
+.anchorBL {  
+    display:none  
+}
+#r-result div{
+    border:none!important;
+}   
+
+.el-tabs__header{
+    background-color: #eee!important;
+}
+.el-table .warning-row {
+    background: pink;
+}
+.el-table .warning {
+    background: #F22F2F;
+}
+/* tabs 标签页 */
+.el-tabs--border-card>.el-tabs__content{
+padding:10px;
+}
+
+/* 增加table的居中样式*/
+.el-table td, .el-table th{
+    text-align: center;
+}
+.table-header{
+  background: rgba(0, 0, 0, 0.2)
+}
+th:first-child .cell{
+  padding: 0 !important;
+}
+
+.el-table-column--selection .cell{
+  padding-left: 11px;
+}
+
+.selectDialog .el-dialog{
+  width:950px;
+}
+.ht td{
+  height:36px;
+}
+.el-input--suffix .el-input__inner{
+    padding-right:0px;
+}
+.el-date-editor.el-input{
+  width: auto;
+}
+.el-form-item__label{
+    padding-right:5px;
+}
+.el-message{
+    z-index: 30000!important;
+}
+.el-form-item.is-success .el-input__inner, .el-form-item.is-success .el-textarea__inner{
+  border-color: #dcdfe6;
+}
+.el-form-item.is-success .el-input__inner:focus, .el-form-item.is-success .el-textarea__inner:focus {
+  border-color: #409EFF;
+}
+.el-form-item__content .el-input-group__append{
+  padding: 0px 12px;
+}
+.el-button{
+  font-family:Helvetica, Microsoft YaHei, sans-serif;
+}
+.el-table{
+  color:#222;
+  font-size: 13px;
+}
+.el-table .cell{
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.el-checkbox__label{
+  font-size:12px;
+}
+.el-table th.is-sortable{
+  padding-top: 6px;
+}
+/* element 表头错位问题 */
+.el-table th.gutter{
+  display: table-cell!important;
+}
+.el-input__inner{
+  padding:0 10px;
+}
+.sell-list-pager .el-table th div{
+  text-align:center;
+}
+.el-table .caret-wrapper{
+  position: absolute;
+  width: 20px;
+  top: -4px;
+  right: 0px;
+}
+.el-input--mini .el-input__inner::-webkit-input-placeholder{
+  color:#888;
+}
+/*.el-tooltip__popper.is-dark{*/
+  /*width:40%;*/
+/*}*/

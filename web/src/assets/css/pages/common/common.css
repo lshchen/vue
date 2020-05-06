@@ -1,0 +1,57 @@
+/* element loading遮罩层调整 */
+.el-loading-mask {
+    z-index: 499; /* 原element遮罩z-index为2000 */
+}
+.sys-app,
+.sys-full-page{
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.sys-page{
+    width: 100%;
+    height: 100%;
+    padding:0 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+.sys-content {
+    position: relative;
+    /* padding-top: 39px; */
+}
+.sys-content .top {
+    left: 0
+}
+.sys-form {
+    margin-bottom: 10px;
+    margin-top: 40px;
+}
+.sys-form.form-width460 {
+    width: 460px;
+}
+ /* 详情信息样式 */
+ .infor-row{
+   line-height: 200%;
+   font-size: 14px;
+   display: flex;
+ }
+ .infor-col{
+   flex: 1;
+   display: flex;
+   align-items: center;
+   max-width: 25%;
+   margin: 0;
+   line-height: 40px;
+ }
+ .infor-col span:nth-child(1){
+   width: 100px;
+   text-align: right;
+   color: #999999;
+   padding-right: 10px;
+ }
+ .infor-col span:nth-child(2){
+   flex: 1;
+   white-space: nowrap;
+   color: #394043;
+ }

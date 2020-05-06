@@ -1,0 +1,69 @@
+.sys-header {
+  position: absolute;
+  width: 100%;
+  height: 60px;
+  background-color: #4169ad;
+  z-index: 500;
+}
+.sys-header .side-nav .el-menu .is-active {
+  /* background-color: #214983; */
+  border-bottom: none;
+}
+
+.el-menu--horizontal>.el-submenu.is-active .el-submenu__title{
+  border-bottom: 0px;
+}
+/* .el-menu--horizontal>.el-submenu.is-active .el-submenu__title{
+  background-color: #214983!important;
+}
+
+.sys-header .side-nav .el-menu .el-menu-item,
+.sys-header .side-nav .el-menu .el-submenu .el-submenu__title,
+.sys-header .side-nav .el-menu .el-submenu .el-submenu__title i {
+  color: #ffffff!important;
+}
+
+.sys-header .side-nav .el-menu .el-menu-item:hover,
+.sys-header .side-nav .el-menu .el-submenu:hover,
+.sys-header .side-nav .el-menu .is-opened {
+  background-color: #214983;
+} */
+
+.sys-header .userInfo {
+  float: right;
+  height: 60px;
+}
+
+.sys-header .userInfo > ul {
+  height: 60px;
+}
+
+.sys-header .userInfo .el-dropdown {
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+}
+
+.sys-header .userInfo > ul > li {
+  display: inline-block;
+  height: 60px;
+  line-height: 60px;
+  margin-right: 20px;
+  color: white;
+}
+
+.sys-header .userInfo > ul > li .lang {
+  cursor: pointer;
+}
+
+.sys-header .userInfo > ul > li .user {
+  cursor: pointer;
+}
+
+.sys-header .nav-user-photo {
+  margin: 8px 8px 0 0;
+  border-radius: 100%;
+  border: 2px solid #FFF;
+  max-width: 40px;
+  max-height: 40px;
+}

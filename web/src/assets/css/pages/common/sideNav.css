@@ -1,0 +1,30 @@
+.side-nav.top {
+    float: left;
+    margin-left: 20px;
+}
+.el-menu {
+  border-right: solid 1px #CDD5DB;
+  list-style: none;
+  position: relative;
+  margin: 0;
+  padding-left: 0;
+  background-color: #fff;
+}
+.side-nav .el-menu {
+    border-right: none;
+}
+.side-nav.top > .el-menu {
+    background-color: transparent;
+}
+.el-menu--horizontal {
+  border-right: none;
+  border-bottom: solid 1px #CDD5DB;
+}
+.side-nav .full-screen-navBg {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+}

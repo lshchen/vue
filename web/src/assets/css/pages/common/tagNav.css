@@ -1,0 +1,82 @@
+.tag-nav {
+    position: fixed;
+    top: 59px;
+    width: 100%;
+    height: 30px;
+    padding: 10px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 1px 2px #f2f2f2;
+    box-sizing: border-box;
+}
+.tag-nav .tag-nav-item {
+    display: inline-block;
+    position: relative;
+    height: 29px;
+    line-height: 29px;
+    padding: 0 10px;
+    margin-right: 10px;
+    border: 1px solid rgba(152, 178, 204, 0.2);
+    border-radius: 4px;
+    background-color: rgba(152, 178, 204, 0.1);
+    text-decoration: none;
+}
+
+.tag-nav .scroll-wrap .scroll-cont .router-link-exact-active{
+    color: #409eff;
+    /* background-color: #e9ecee; */
+    background-color: #fff;
+}
+
+.scroll-cont{
+    /* top: 10px; */
+    border-radius: 4px 4px 0 0;
+    overflow: hidden;
+}
+.sys-header{
+    /* height: 40px; */
+}
+/* .el-menu--horizontal>.el-menu-item{
+    height: 40px;
+    line-height: 40px;
+}
+.el-menu--horizontal>.el-submenu .el-submenu__title{
+    height: 40px;
+    line-height: 40px;
+}
+.sys-header .userInfo{
+    height: 40px;
+}
+.sys-header .userInfo > ul > li{
+    line-height: 40px;
+}
+.sys-header .nav-user-photo{
+    max-width: 30px;
+} */
+.sys-content{
+    top: 79px;
+    position: absolute;
+    /* background: #e9ecee; */
+    background: #fff;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top:10px; 
+}
+.sys-content > div:nth-child(2){
+    padding: 10px;
+}
+.el-menu--horizontal > .is-active{
+    /* background: hsla(0,0%,100%,.5)!important;
+    border-radius: 5px; */
+}
+/* [role="menu"],[role="menu"] > .el-menu-item{
+    background-color:#fff!important;
+    color:#333!important;
+}
+[role="menu"] > .el-menu-item:hover{
+    background: #4169ad!important;
+    color: #fff!important;
+} */
