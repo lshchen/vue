@@ -25,7 +25,7 @@ const getters = {
   },
   // 根据key获取value
   getValueByCode: (state) => (code, key) => {
-    let list = state.config.dictionaryList.filter(item => item.code === code)
+    const list = state.config.dictionaryList.filter(item => item.code === code)
     return list.filter(item => item.key === key).length > 0 ? list.filter(item => item.key === key)[0].value : ''
   },
   ossDomain: state => state.config.ossDomain,
@@ -36,17 +36,17 @@ const getters = {
   // 获取楼盘tree
   BuildList: state => state.config.BuildList,
   getOrgNameByCode: (state) => (code) => {
-    let orgList = state.config.organizationList.filter(item => item.code === code)
+    const orgList = state.config.organizationList.filter(item => item.code === code)
     if (orgList && orgList.length > 0) {
       return orgList[0].name
     }
     return ''
   },
   getOrgNameWithParentByCode: (state) => (code) => {
-    let orgList = state.config.organizationList.filter(item => item.code === code)
+    const orgList = state.config.organizationList.filter(item => item.code === code)
     if (orgList && orgList.length > 0) {
-      let orgName = orgList[0].name
-      let parentOrgList = state.config.organizationList.filter(item => item.code === orgList[0].parentCode)
+      const orgName = orgList[0].name
+      const parentOrgList = state.config.organizationList.filter(item => item.code === orgList[0].parentCode)
       if (parentOrgList && parentOrgList.length > 0) {
         return parentOrgList[0].name + '/' + orgName
       } else {
@@ -57,7 +57,7 @@ const getters = {
   },
   getPositionNameByCode: (state) => (code) => {
     if (code) {
-      let posList = state.config.positionList.filter(item => item.code === code)
+      const posList = state.config.positionList.filter(item => item.code === code)
       if (posList && posList.length > 0) {
         return posList[0].name
       }
@@ -73,7 +73,7 @@ const getters = {
       if (nowDate >= smallDate && nowDate <= bigDate) return code
     }
     if (code) {
-      let textWaterMark = '?x-oss-process=image/watermark,image_c2FsZS9zdGF0aWMvbG9nb190cmFuc3BhcmVuY3kucG5n,g_center'
+      const textWaterMark = '?x-oss-process=image/watermark,image_c2FsZS9zdGF0aWMvbG9nb190cmFuc3BhcmVuY3kucG5n,g_center'
       return code.indexOf('http://resource-phyd.oss-cn-shanghai.aliyuncs.com') === -1 ? code + state.user.watermark : code + textWaterMark
     }
     return ''

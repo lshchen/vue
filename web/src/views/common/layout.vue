@@ -8,11 +8,11 @@
                 </template>
             </v-header-bar>
         </template>
-        <div class="sys-content top">
-            <keep-alive :include="nameList">
-                <router-view :key="$route.fullPath"></router-view>
-            </keep-alive>
-        </div>
+      <div class="sys-content top">
+        <keep-alive :include="nameList">
+          <router-view :key="$route.fullPath"></router-view>
+        </keep-alive>
+      </div>
     </div>
 </template>
 

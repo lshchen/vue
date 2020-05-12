@@ -80,6 +80,24 @@ const actions = {
     }
   }
 
+  // 将菜单列表扁平化形成权限列表
+  // getPermissionList ({state}) {
+  //   return new Promise((resolve) => {
+  //     let permissionList = []
+  //     // 将菜单数据扁平化为一级
+  //     function flatNavList (arr) {
+  //       for (let v of arr) {
+  //         if (v.child && v.child.length) {
+  //           flatNavList(v.child)
+  //         } else {
+  //           permissionList.push(v)
+  //         }
+  //       }
+  //     }
+  //     flatNavList(state.navList)
+  //     resolve(permissionList)
+  //   })
+  // }
 }
 
 export default {

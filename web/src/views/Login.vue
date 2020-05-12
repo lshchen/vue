@@ -32,9 +32,9 @@
             <el-button :loading="$store.state.loading.isLoading" @click="login" type="primary" class="button-login">登录</el-button>
           </el-form>
         </el-card>
-      </div> <!-- div.form-group -->
-    </div> <!-- div.layer.flex-center -->
-  </div> <!-- div.login-page -->
+      </div>
+    </div>
+  </div>
 </template>
 <script>
 // import os from 'os'
@@ -85,7 +85,6 @@ export default {
   }
   .city-selete-wrap-style {
     display: flex;
-
     .city-icon {
       font-size: 16px;
       height: 40px;

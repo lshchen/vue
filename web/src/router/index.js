@@ -24,6 +24,11 @@ const routes = [
         }
       }
     ]
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import(/* webpackChunkName: "register" */ '../views/Home')
   }
 ]
 

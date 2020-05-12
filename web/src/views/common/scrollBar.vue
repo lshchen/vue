@@ -129,4 +129,3 @@ export default {
     padding-top: 1px;
   }
 </style>
-

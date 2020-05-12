@@ -4,20 +4,20 @@
   </div>
 </template>
 <script>
-  export default {
-    name: 'sale',
-    components: {
-    },
-    data () {
-      return {
-        isRouterAlive: true
-      }
-    },
-    mounted () {
-    },
-    methods: {
+export default {
+  name: 'sale',
+  components: {
+  },
+  data () {
+    return {
+      isRouterAlive: true
     }
+  },
+  mounted () {
+  },
+  methods: {
   }
+}
 </script>
 <style lang="scss" scoped>
   /*@import "assets/css/test";*/
