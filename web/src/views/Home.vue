@@ -43,6 +43,11 @@ export default {
     handleClose (key, keyPath) {
       console.log(key, keyPath)
     }
+  },
+  mounted () {
+    this.get('/parameter/query', {}, (res) => {
+      console.log(res)
+    })
   }
 }
 </script>
